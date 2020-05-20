@@ -13,39 +13,39 @@
 用于 https://github.com/jiasy/Flash2Unity/ 时，运行时的部分输出:  
 ...  
 FlashManager -> Update  
-> MovieClip -> frameUpdate  
-> > MovieClip -> updateCurrentFrame  
-> > MovieClip -> updateChildrenOnStage  
-> > MovieClip -> runActions  
-> > > MovieClip -> doFrameActionByFrameInt(frameInt_ : 2)  
-> > MovieClip -> enterFrame  
-> > > MovieClip -> updateDisplayList(frameChanged_ : True)  
-> > > > DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)  
-> > > > DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)  
-> > > > Sprite -> frameUpdate  
-> > > > > > Sprite -> updateRGB(parentCurrentFrame_ : 2)  
-> > > > > > Sprite -> updateAlpha(parentCurrentFrame_ : 2,parentsAlpha_ : 1)  
-> > > > > > DisplayObject -> frameUpdateEnd  
-> > > > DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)  
-> > > > DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)  
-> > > > Sprite -> frameUpdate  
-> > > > > > Sprite -> updateRGB(parentCurrentFrame_ : 2)  
-> > > > > > Sprite -> updateAlpha(parentCurrentFrame_ : 2,parentsAlpha_ : 1)  
-> > > > > > DisplayObject -> frameUpdateEnd  
-> > > > DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)  
-> > > > DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)  
-> > > > MovieClip -> frameUpdate  
-> > > > > > MovieClip -> updateCurrentFrame  
-> > > > > > MovieClip -> updateChildrenOnStage  
-> > > > > > MovieClip -> runActions  
-> > > > > > MovieClip -> enterFrame  
-> > > > > > MovieClip -> updateDisplayList(frameChanged_ : True)  
-> > > > > > > DisplayObject -> syncPropertys(parentCurrentFrame_ : 1)  
-> > > > > > > DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 1)  
-> > > > > > > Sprite -> frameUpdate  
-> > > > > > > > Sprite -> updateRGB(parentCurrentFrame_ : 1)  
-> > > > > > > > Sprite -> updateAlpha(parentCurrentFrame_ : 1,parentsAlpha_ : 1)  
-> > > > > > > > DisplayObject -> frameUpdateEnd  
-> > > > > > DisplayObject -> frameUpdateEnd  
-> > DisplayObject -> frameUpdateEnd  
+|___MovieClip -> frameUpdate  
+|___|___MovieClip -> updateCurrentFrame  
+|___|___MovieClip -> updateChildrenOnStage  
+|___|___MovieClip -> runActions  
+|___|___|___MovieClip -> doFrameActionByFrameInt(frameInt_ : 2)  
+|___|___MovieClip -> enterFrame  
+|___|___|___MovieClip -> updateDisplayList(frameChanged_ : True)  
+|___|___|___|___DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)  
+|___|___|___|___DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)  
+|___|___|___|___Sprite -> frameUpdate  
+|___|___|___|___|___|___Sprite -> updateRGB(parentCurrentFrame_ : 2)  
+|___|___|___|___|___|___Sprite -> updateAlpha(parentCurrentFrame_ : 2,parentsAlpha_ : 1)  
+|___|___|___|___|___|___DisplayObject -> frameUpdateEnd  
+|___|___|___|___DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)  
+|___|___|___|___DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)  
+|___|___|___|___Sprite -> frameUpdate  
+|___|___|___|___|___|___Sprite -> updateRGB(parentCurrentFrame_ : 2)  
+|___|___|___|___|___|___Sprite -> updateAlpha(parentCurrentFrame_ : 2,parentsAlpha_ : 1)  
+|___|___|___|___|___|___DisplayObject -> frameUpdateEnd  
+|___|___|___|___DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)  
+|___|___|___|___DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)  
+|___|___|___|___MovieClip -> frameUpdate  
+|___|___|___|___|___|___MovieClip -> updateCurrentFrame  
+|___|___|___|___|___|___MovieClip -> updateChildrenOnStage  
+|___|___|___|___|___|___MovieClip -> runActions  
+|___|___|___|___|___|___MovieClip -> enterFrame  
+|___|___|___|___|___|___MovieClip -> updateDisplayList(frameChanged_ : True)  
+|___|___|___|___|___|___|___DisplayObject -> syncPropertys(parentCurrentFrame_ : 1)  
+|___|___|___|___|___|___|___DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 1)  
+|___|___|___|___|___|___|___Sprite -> frameUpdate  
+|___|___|___|___|___|___|___|___Sprite -> updateRGB(parentCurrentFrame_ : 1)  
+|___|___|___|___|___|___|___|___Sprite -> updateAlpha(parentCurrentFrame_ : 1,parentsAlpha_ : 1)  
+|___|___|___|___|___|___|___|___DisplayObject -> frameUpdateEnd  
+|___|___|___|___|___|___DisplayObject -> frameUpdateEnd  
+|___|___DisplayObject -> frameUpdateEnd  
 ...
