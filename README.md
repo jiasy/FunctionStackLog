@@ -12,40 +12,40 @@
   
 用于 https://github.com/jiasy/Flash2Unity/ 时，运行时的部分输出:  
 ...  
-FlashManager -> Update
-|   MovieClip -> frameUpdate
-|   |   MovieClip -> updateCurrentFrame
-|   |   MovieClip -> updateChildrenOnStage
-|   |   MovieClip -> runActions
-|   |   |   MovieClip -> doFrameActionByFrameInt(frameInt_ : 2)
-|   |   MovieClip -> enterFrame
-|   |   |   MovieClip -> updateDisplayList(frameChanged_ : True)
-|   |   |   |   DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)
-|   |   |   |   DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)
-|   |   |   |   Sprite -> frameUpdate
-|   |   |   |   |   |   Sprite -> updateRGB(parentCurrentFrame_ : 2)
-|   |   |   |   |   |   Sprite -> updateAlpha(parentCurrentFrame_ : 2,parentsAlpha_ : 1)
-|   |   |   |   |   |   DisplayObject -> frameUpdateEnd
-|   |   |   |   DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)
-|   |   |   |   DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)
-|   |   |   |   Sprite -> frameUpdate
-|   |   |   |   |   |   Sprite -> updateRGB(parentCurrentFrame_ : 2)
-|   |   |   |   |   |   Sprite -> updateAlpha(parentCurrentFrame_ : 2,parentsAlpha_ : 1)
-|   |   |   |   |   |   DisplayObject -> frameUpdateEnd
-|   |   |   |   DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)
-|   |   |   |   DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)
-|   |   |   |   MovieClip -> frameUpdate
-|   |   |   |   |   |   MovieClip -> updateCurrentFrame
-|   |   |   |   |   |   MovieClip -> updateChildrenOnStage
-|   |   |   |   |   |   MovieClip -> runActions
-|   |   |   |   |   |   MovieClip -> enterFrame
-|   |   |   |   |   |   MovieClip -> updateDisplayList(frameChanged_ : True)
-|   |   |   |   |   |   |   DisplayObject -> syncPropertys(parentCurrentFrame_ : 1)
-|   |   |   |   |   |   |   DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 1)
-|   |   |   |   |   |   |   Sprite -> frameUpdate
-|   |   |   |   |   |   |   |   Sprite -> updateRGB(parentCurrentFrame_ : 1)
-|   |   |   |   |   |   |   |   Sprite -> updateAlpha(parentCurrentFrame_ : 1,parentsAlpha_ : 1)
-|   |   |   |   |   |   |   |   DisplayObject -> frameUpdateEnd
-|   |   |   |   |   |   DisplayObject -> frameUpdateEnd
-|   |   DisplayObject -> frameUpdateEnd
+FlashManager -> Update  
+|   MovieClip -> frameUpdate  
+|   |   MovieClip -> updateCurrentFrame  
+|   |   MovieClip -> updateChildrenOnStage  
+|   |   MovieClip -> runActions  
+|   |   |   MovieClip -> doFrameActionByFrameInt(frameInt_ : 2)  
+|   |   MovieClip -> enterFrame  
+|   |   |   MovieClip -> updateDisplayList(frameChanged_ : True)  
+|   |   |   |   DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)  
+|   |   |   |   DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)  
+|   |   |   |   Sprite -> frameUpdate  
+|   |   |   |   |   |   Sprite -> updateRGB(parentCurrentFrame_ : 2)  
+|   |   |   |   |   |   Sprite -> updateAlpha(parentCurrentFrame_ : 2,parentsAlpha_ : 1)  
+|   |   |   |   |   |   DisplayObject -> frameUpdateEnd  
+|   |   |   |   DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)  
+|   |   |   |   DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)  
+|   |   |   |   Sprite -> frameUpdate  
+|   |   |   |   |   |   Sprite -> updateRGB(parentCurrentFrame_ : 2)  
+|   |   |   |   |   |   Sprite -> updateAlpha(parentCurrentFrame_ : 2,parentsAlpha_ : 1)  
+|   |   |   |   |   |   DisplayObject -> frameUpdateEnd  
+|   |   |   |   DisplayObject -> syncPropertys(parentCurrentFrame_ : 2)  
+|   |   |   |   DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 2)  
+|   |   |   |   MovieClip -> frameUpdate  
+|   |   |   |   |   |   MovieClip -> updateCurrentFrame  
+|   |   |   |   |   |   MovieClip -> updateChildrenOnStage  
+|   |   |   |   |   |   MovieClip -> runActions  
+|   |   |   |   |   |   MovieClip -> enterFrame  
+|   |   |   |   |   |   MovieClip -> updateDisplayList(frameChanged_ : True)  
+|   |   |   |   |   |   |   DisplayObject -> syncPropertys(parentCurrentFrame_ : 1)  
+|   |   |   |   |   |   |   DisplayObject -> getCurrentFrameAlpha(parentCurrentFrame_ : 1)  
+|   |   |   |   |   |   |   Sprite -> frameUpdate  
+|   |   |   |   |   |   |   |   Sprite -> updateRGB(parentCurrentFrame_ : 1)  
+|   |   |   |   |   |   |   |   Sprite -> updateAlpha(parentCurrentFrame_ : 1,parentsAlpha_ : 1)  
+|   |   |   |   |   |   |   |   DisplayObject -> frameUpdateEnd  
+|   |   |   |   |   |   DisplayObject -> frameUpdateEnd  
+|   |   DisplayObject -> frameUpdateEnd  
 ...
