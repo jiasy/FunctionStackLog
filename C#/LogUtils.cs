@@ -108,7 +108,7 @@ public class LogUtils {
 		_stackLogCacheList.Add(_log);//缓存Log
 		if(_stackLogCacheList.Count >= logOutputCount){//当缓存大于指定数值
 			StringBuilder _logCache = new StringBuilder();//log缓存的拼接
-			for (int _idx = 0; _idx < logOutputCount; _idx++){
+			for (int _idx = 0; _idx < _stackLogCacheList.Count; _idx++){
 				StringBuilder _tempLog = _stackLogCacheList[_idx];//当前Log
 				_tempLog.Append ("\n");//每个Log间添加换行
 				_logCache.Append(_tempLog);	//拼接

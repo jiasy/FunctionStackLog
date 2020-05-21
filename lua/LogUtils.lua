@@ -172,7 +172,18 @@ function d(dValue)
 		LogUtils.funcIn()
 	end
 	e("eValue")
+	f(function() LogUtils.funcIn()
+		e("eValue")
+	end)
 end
+
+
+function f(fParameterFunc)
+	LogUtils.funcIn()
+	fParameterFunc()
+end
+
+
 
 a("aValue")
 a("aValue")
