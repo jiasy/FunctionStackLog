@@ -25,7 +25,7 @@ public class LogUtils {
 	//达到多少才输出
 	public static int logOutputCount = 1;
 	//显示没有添加过输出，但是在实际调用中发生的Log
-	public static bool showAllLog = true;
+	public static bool recoverLog = true;
 	//当前执行堆栈
 	public static List<string> currentStackList;
 	//上一次执行堆栈
@@ -128,24 +128,24 @@ public class LogUtils {
 			return;
 		}
 		
-		//当前堆栈方法名队列
-		currentStackList = new List<string>();
-		for (int _idx = 0; _idx < _stackIndentCount; _idx++){//不算最后一个LogUitls.FunIn
-			string _funcStr = stackTraceInstance.GetFrame(_stackIndentCount - _idx - 1).GetMethod().Name;
-			currentStackList.Add(_funcStr);
-		}
-		
-		int _lastSameIdx = lastSameIdx(currentStackList,lastStackList);
-		int _startIdx = (_lastSameIdx + 1);
-		int _endLength = ( _stackIndentCount - 2);
-		if (_startIdx<_endLength){
-			for (int _idx = _startIdx; _idx <_endLength; _idx++){
-				StringBuilder _logRecover = new StringBuilder ();
-				_logRecover.Append (stackIndentList[_idx + 1]);
-				_logRecover.Append ("[UNCATCH]");
-				_logRecover.Append (" -> ");
-				_logRecover.Append (currentStackList[_idx]);// 方法
-				stackLogCacheList.Add(_logRecover);//缓存Log
+		if (recoverLog){
+			//当前堆栈方法名队列
+			currentStackList = new List<string>();
+			for (int _idx = 0; _idx < _stackIndentCount; _idx++){//不算最后一个LogUitls.FunIn
+				string _funcStr = stackTraceInstance.GetFrame(_stackIndentCount - _idx - 1).GetMethod().Name;
+				currentStackList.Add(_funcStr);
+			}
+			int _lastSameIdx = lastSameIdx(currentStackList,lastStackList);
+			int _startIdx = (_lastSameIdx + 1);
+			int _endLength = ( _stackIndentCount - 2);
+			if (_startIdx<_endLength){
+				for (int _idx = _startIdx; _idx <_endLength; _idx++){
+					StringBuilder _logRecover = new StringBuilder ();
+					_logRecover.Append (stackIndentList[_idx + 1]);
+					_logRecover.Append ("? -> ");
+					_logRecover.Append (currentStackList[_idx]);// 方法
+					stackLogCacheList.Add(_logRecover);//缓存Log
+				}
 			}
 		}
 

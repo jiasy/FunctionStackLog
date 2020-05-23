@@ -3,15 +3,18 @@ LogUtils.stackIndentList = {}
 LogUtils.fileNameCacheDict = {}
 LogUtils.lastSackIndentCount = -1
 LogUtils.filterList = {
+	"LogUtils -> b",
 	"LogUtils -> c",
 }
 LogUtils.lockLogStackLength = -1
-LogUtils.lockLogAfter = true --发生过滤后，后续Log是否继续输出
+LogUtils.lockLogAfter = false --发生过滤后，后续Log是否继续输出
 LogUtils.logging = true
+LogUtils.recoverLog = true
 LogUtils.logOutputCount = 1
 LogUtils.stackLogCacheList = {} --Log缓存
 LogUtils.logCount = 0
 LogUtils.targetLogCount = 0
+LogUtils.lastStackList = {}
 
 function LogUtils.split(input, delimiter)--字符串切割
 	input = tostring(input)
@@ -75,6 +78,30 @@ function LogUtils.doLog(logStr_)
 	end
 end
 
+function LogUtils.reverseTable(sourceList_)
+	local _tmpList = {}
+	for _idx = 1, #sourceList_ do
+		local key = #sourceList_
+		_tmpList[_idx] = table.remove(sourceList_)
+	end
+	return _tmpList
+end
+
+function LogUtils.lastSameIdx(currentList_,lastList_)
+	local _sameIdx = 1
+	local _length =  #lastList_
+	for _idx = 1 , _length do
+		local _funcStr = lastList_[_idx]
+		if _idx > #currentList_ then
+			return _sameIdx
+		end
+		if _funcStr == currentList_[_idx] then
+			_sameIdx = _idx
+		end
+	end
+	return _sameIdx
+end
+
 function LogUtils.funcIn()
 	if not LogUtils.logging then
 		return
@@ -90,17 +117,19 @@ function LogUtils.funcIn()
 	
 	-- 取得堆栈长度
 	local _loopStackLevel = _stackLevel
+	local _currentStackList = {}
 	while true do
 		local _stackFrameLoop = debug.getinfo( _loopStackLevel, "nSl") 
 		if _stackFrameLoop == nil then 
 			break
 		end
 		_loopStackLevel = _loopStackLevel + 1
+		table.insert(_currentStackList,_stackFrameLoop.name) -- 记录堆栈
 	end
 	-- 缓存缩进空白
+	LogUtils.cacheStackIndent(_loopStackLevel)
 	local _stackIndentCount = _loopStackLevel - 3
-	LogUtils.cacheStackIndent(_stackIndentCount)
-	
+
 	if LogUtils.lockLogStackLength ~= -1 then
 		if not LogUtils.lockLogAfter then
 			LogUtils.lockLogStackLength = -1
@@ -116,6 +145,18 @@ function LogUtils.funcIn()
 			LogUtils.lockLogStackLength = _stackIndentCount
 		end
 		return
+	end
+	
+	if LogUtils.recoverLog then --追溯中间的LOG
+		_currentStackList = LogUtils.reverseTable(_currentStackList) -- 数组倒叙
+		local _lastSameIdx = LogUtils.lastSameIdx(_currentStackList,LogUtils.lastStackList) 
+		local _startIdx = _lastSameIdx + 1
+		if _startIdx < (_stackIndentCount - 2 )then
+			for _idx = _startIdx , (_stackIndentCount - 2) do
+				LogUtils.doLog(string.format("%s%s%s",LogUtils.stackIndentList[_idx + 1] ,"? -> ",_currentStackList[_idx]))
+			end
+		end
+		LogUtils.lastStackList = _currentStackList
 	end
 	
 	-- 参数
@@ -150,6 +191,7 @@ function LogUtils.funcIn()
 		end
 		_parameterStr = _parameterStr .. " )"
 	end
+	
 	LogUtils.doLog(string.format("%s%s%s",LogUtils.stackIndentList[_stackIndentCount],_fileAndFuncName,_parameterStr))
 end
 
@@ -172,7 +214,8 @@ function d(dValue)
 		LogUtils.funcIn()
 	end
 	e("eValue")
-	f(function() LogUtils.funcIn()
+	f(function() 
+		LogUtils.funcIn()
 		e("eValue")
 	end)
 end
@@ -186,9 +229,9 @@ end
 
 
 a("aValue")
-a("aValue")
-LogUtils.lockLogAfter = false
-a("aValue")
-LogUtils.lockLogAfter = true
-a("aValue")
+--a("aValue")
+--LogUtils.lockLogAfter = false
+--a("aValue")
+--LogUtils.lockLogAfter = true
+--a("aValue")
 
