@@ -18,7 +18,7 @@ public class LogUtils {
 	//实际LOG的缓存
 	public static List<StringBuilder> stackLogCacheList = new List<StringBuilder> ();
 	//Log输出中
-    public static bool logging = false;
+    public static bool logging = true;
 	//发生过滤后，后续Log是否继续输出
 	public static bool lockLogAfter = false;
 	//当发生堆栈锁后，后续的高于指定层级的Log将不再输出，直至层数跌回指定层级以下
@@ -26,7 +26,7 @@ public class LogUtils {
 	//达到多少才输出
 	public static int logOutputCount = 1;
 	//显示没有添加过输出，但是在实际调用中发生的Log
-    public static bool recoverLog = false;
+    public static bool recoverLog = true;
 	//当前执行堆栈
 	public static List<string> currentStackList;
 	//上一次执行堆栈
@@ -103,6 +103,16 @@ public class LogUtils {
 		}
 		return _sameIdx;
 	}
+	public static void WriteLog(string log_){
+		//追加内容 只能以写的方式
+		FileStream fs = new FileStream(logPath,FileMode.Append,FileAccess.Write);
+		byte[] bs = System.Text.Encoding.Default.GetBytes(log_);
+		fs.Seek(0, SeekOrigin.End);
+		fs.Write(bs,0,bs.Length);
+		fs.Flush();//清除缓冲区，把所有数据写入文件
+		fs.Close();
+		fs.Dispose();
+	}
 	// 调用方式
 	// LogUtils.FuncIn(System.Reflection.MethodBase.GetCurrentMethod().ReflectedType.FullName," ( aKey_ = aValue , bKey_ = bValue ) ");
 	public static void FuncIn(string className_,string parameters_ = ""){
@@ -134,8 +144,8 @@ public class LogUtils {
 			//当前堆栈方法名队列
 			currentStackList = new List<string>();
 			for (int _idx = 0; _idx < _stackIndentCount; _idx++){//不算最后一个LogUitls.FunIn
-				string _funcStr = stackTraceInstance.GetFrame(_stackIndentCount - _idx - 1).GetMethod().Name;
-				currentStackList.Add(_funcStr);
+				StackFrame _sf = stackTraceInstance.GetFrame(_stackIndentCount - _idx - 1);
+				currentStackList.Add(_sf.GetMethod().Name);
 			}
 			int _lastSameIdx = lastSameIdx(currentStackList,lastStackList);
 			int _startIdx = (_lastSameIdx + 1);
@@ -164,9 +174,6 @@ public class LogUtils {
 			for (int _idx = 0; _idx < stackLogCacheList.Count; _idx++){
 				StringBuilder _tempLog = stackLogCacheList[_idx];//当前Log
                 string _tempLogStr = _tempLog.ToString();
-                if (logging == false && loggingUntil != null && loggingUntil == _tempLogStr){
-                    logging = true;
-                }
                 if (!logging){
                     continue;
                 }
@@ -176,15 +183,8 @@ public class LogUtils {
 			}
 			stackLogCacheList.Clear();//清理Log
             if (logging){
-                string _logCacheStr = _logCache.ToString(); //转换成字符串
+				WriteLog(_logCache.ToString());
                 //追加内容 只能以写的方式
-                FileStream fs = new FileStream(logPath,FileMode.Append,FileAccess.Write);
-                byte[] bs = System.Text.Encoding.Default.GetBytes(_logCacheStr);
-                fs.Seek(0, SeekOrigin.End);
-                fs.Write(bs,0,bs.Length);
-                fs.Flush();//清除缓冲区，把所有数据写入文件
-                fs.Close();
-                fs.Dispose();
                 //System.IO.File.AppendAllText(logPath, _logCacheStr);
             }
         }
