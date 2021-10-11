@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 
 public class LogUtils {
 	//上一个Log输出的层级
-	public static string logPath = "/Volumes/Files/develop/selfDevelop/Unity/Flash2Unity2018/C#Temp/C#Log";
+	public static string logPath = "/Volumes/18604037792/develop/TuYoo/GIT/MJ/LogUtils/C#Log";
 	//过滤数组，按照 类名 -> 方法名 的格式进行过滤
 	public static string[] filterList = {
 		"MainClass -> F3_IDX3",
@@ -104,14 +104,16 @@ public class LogUtils {
 		return _sameIdx;
 	}
 	public static void WriteLog(string log_){
-		//追加内容 只能以写的方式
-		FileStream fs = new FileStream(logPath,FileMode.Append,FileAccess.Write);
-		byte[] bs = System.Text.Encoding.Default.GetBytes(log_);
-		fs.Seek(0, SeekOrigin.End);
-		fs.Write(bs,0,bs.Length);
-		fs.Flush();//清除缓冲区，把所有数据写入文件
-		fs.Close();
-		fs.Dispose();
+	    lock(filterList){
+			//追加内容 只能以写的方式
+			FileStream fs = new FileStream(logPath,FileMode.Append,FileAccess.Write);
+			byte[] bs = System.Text.Encoding.Default.GetBytes(log_);
+			fs.Seek(0, SeekOrigin.End);
+			fs.Write(bs,0,bs.Length);
+			fs.Flush();//清除缓冲区，把所有数据写入文件
+			fs.Close();
+			fs.Dispose();
+		}
 	}
 	// 调用方式
 	// LogUtils.FuncIn(System.Reflection.MethodBase.GetCurrentMethod().ReflectedType.FullName," ( aKey_ = aValue , bKey_ = bValue ) ");
