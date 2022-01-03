@@ -1,3 +1,7 @@
+
+-- 文件首行，作为局部变量引用，以免只require会有找不到的问题。
+-- local LogUtils = require("LogUtils")
+
 if not LogUtils then
 	LogUtils = {}
 	LogUtils.stackIndentList = {}
@@ -15,7 +19,7 @@ if not LogUtils then
 	LogUtils.logCount = 0
 	LogUtils.targetLogCount = 0
 	LogUtils.lastStackList = {}
-	LogUtils.filePath = '/Volumes/18604037792/develop/ShunYuan/farmNew/C#Temp/C#Log'
+	LogUtils.filePath = '/Volumes/18604037792/develop/BB/C#Temp/C#Log'
 	if false then --Unity tolua
 		require 'tolua.reflection'
 		require 'System.Reflection.BindingFlags'
@@ -174,7 +178,7 @@ if not LogUtils then
 			local _startIdx = _lastSameIdx + 1
 			if _startIdx < (_stackIndentCount - 2 )then
 				for _idx = _startIdx , (_stackIndentCount - 2) do
-					LogUtils.doLog(string.format("%s%s%s",LogUtils.stackIndentList[_idx + 1] ,"? -> ",_currentStackList[_idx]))
+					LogUtils.doLog(string.format("lua ----> %s%s%s",LogUtils.stackIndentList[_idx + 1] ,"? -> ",_currentStackList[_idx]))
 				end
 			end
 			LogUtils.lastStackList = _currentStackList
@@ -216,7 +220,7 @@ if not LogUtils then
 		if _stackIndentCount > 0 then
 			_stackIndentStr = LogUtils.stackIndentList[_stackIndentCount]
 		end
-		LogUtils.doLog(string.format("lua ---->    %s%s%s",_stackIndentStr,_fileAndFuncName,_parameterStr))
+		LogUtils.doLog(string.format("lua ----> %s%s%s",_stackIndentStr,_fileAndFuncName,_parameterStr))
 	end
 end
 

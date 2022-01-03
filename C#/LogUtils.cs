@@ -4,10 +4,19 @@ using System.Text;
 using System.Diagnostics;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Collections;
+using UnityEngine;
 
 public class LogUtils {
-	//上一个Log输出的层级
-	public static string logPath = "/Volumes/18604037792/develop/TuYoo/GIT/MJ/LogUtils/C#Log";
+	public class ByteListContainer{//包装一下不定长的byte[]
+		public byte[] byteList;//长度不一定，所以，无法创建固定长度的二维数组
+		public ByteListContainer(byte[] byteList_){
+            byteList = byteList_;
+		}
+	}
+	//当前正在写入的文件
+	private static string logFilePath = "/Volumes/18604037792/develop/BB/C#Temp/C#Log";
+	private static FileStream currentWritingFile = null;
 	//过滤数组，按照 类名 -> 方法名 的格式进行过滤
 	public static string[] filterList = {
 		"MainClass -> F3_IDX3",
@@ -31,6 +40,10 @@ public class LogUtils {
 	public static List<string> currentStackList;
 	//上一次执行堆栈
 	public static List<string> lastStackList = new List<string> ();
+	//log输出次数记录
+	public static int logLineCount = 0;
+	//当前要写入的数组
+	private static List<ByteListContainer> byteListContainerList = new List<ByteListContainer> ();
 
 	public static void cacheStackIndent(int stackFrameLength_){
 		while (stackIndentList.Count < stackFrameLength_){
@@ -48,8 +61,7 @@ public class LogUtils {
     public static void toggleLog(){
         logging = !logging;
     }
-    public static string isFilterFileAndFunc(string className_, string funcName_)
-    {
+    public static string isFilterFileAndFunc(string className_, string funcName_){
 		string[] _classNameArr;
 		string _className = className_;
 		if (isAContainsB(_className,"+")){
@@ -87,7 +99,7 @@ public class LogUtils {
 	}
 	
 	//包含判断
-	public static bool isAContainsB (string a_, string b_, StringComparison comp_ = StringComparison.OrdinalIgnoreCase) {
+	public static bool isAContainsB (string a_, string b_, StringComparison comp_ = StringComparison.Ordinal) {
 		return a_.IndexOf (b_, comp_) >= 0;
 	}
 	public static int lastSameIdx(List<string> currentList_,List<string> lastList_){
@@ -103,17 +115,36 @@ public class LogUtils {
 		}
 		return _sameIdx;
 	}
-	public static void WriteLog(string log_){
-	    lock(filterList){
-			//追加内容 只能以写的方式
-			FileStream fs = new FileStream(logPath,FileMode.Append,FileAccess.Write);
-			byte[] bs = System.Text.Encoding.Default.GetBytes(log_);
-			fs.Seek(0, SeekOrigin.End);
-			fs.Write(bs,0,bs.Length);
-			fs.Flush();//清除缓冲区，把所有数据写入文件
-			fs.Close();
-			fs.Dispose();
+	public static void WriteLogsToFile (){
+		lock(currentWritingFile){
+			while(byteListContainerList.Count > 0){
+				ByteListContainer byteListContainer = byteListContainerList[0];
+				byteListContainerList.RemoveAt(0);
+				currentWritingFile.Seek(0, SeekOrigin.End);
+				currentWritingFile.Write(byteListContainer.byteList,0,byteListContainer.byteList.Length);
+				currentWritingFile.Flush();//清除缓冲区，把所有数据写入文件
+			}
 		}
+		// currentWritingFile.Close();
+		// currentWritingFile.Dispose();
+		// currentWritingFile = null;//清理掉当前的写入对象
+	}
+	public static void WriteLog(string log_){
+		if(currentWritingFile == null){
+			new FileStream(logFilePath, FileMode.Truncate, FileAccess.ReadWrite).Close();//清空文件内
+			currentWritingFile = new FileStream(logFilePath,FileMode.Append,FileAccess.Write);
+		}
+		logLineCount++;
+			//追加内容 只能以写的方式
+		StringBuilder _logStr = new StringBuilder ();
+		_logStr.Append(log_);
+		// _logStr.Append(" <| ");
+		// _logStr.Append(logLineCount.ToString());
+		// _logStr.Append(" |>");
+		_logStr.Append("\n");
+		byte[] _bs = System.Text.Encoding.Default.GetBytes(_logStr.ToString());
+		byteListContainerList.Add(new ByteListContainer(_bs));
+		WriteLogsToFile();
 	}
 	// 调用方式
 	// LogUtils.FuncIn(System.Reflection.MethodBase.GetCurrentMethod().ReflectedType.FullName," ( aKey_ = aValue , bKey_ = bValue ) ");
@@ -175,19 +206,19 @@ public class LogUtils {
 			StringBuilder _logCache = new StringBuilder();//log缓存的拼接
 			for (int _idx = 0; _idx < stackLogCacheList.Count; _idx++){
 				StringBuilder _tempLog = stackLogCacheList[_idx];//当前Log
-                string _tempLogStr = _tempLog.ToString();
                 if (!logging){
                     continue;
                 }
-				_tempLog.Append ("\n");//每个Log间添加换行
-                _logCache.Append("C# >"); //拼接
-				_logCache.Append(_tempLog);	//拼接
+				//拼接
+                _logCache.Append("C# >");
+				_logCache.Append(stackLogCacheList[_idx]);
+				if (_idx != stackLogCacheList.Count - 1){
+					_logCache.Append("\n");
+				}
 			}
 			stackLogCacheList.Clear();//清理Log
             if (logging){
 				WriteLog(_logCache.ToString());
-                //追加内容 只能以写的方式
-                //System.IO.File.AppendAllText(logPath, _logCacheStr);
             }
         }
 
