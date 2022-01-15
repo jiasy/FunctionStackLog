@@ -4,16 +4,21 @@
 
 if not LogUtils then
 	LogUtils = {}
-	LogUtils.stackIndentList = {}
+	--0表示getinfo本身
+	--1表示调用getinfo的函数(printCallStack)
+	--2表示调用 LogUtils.funcIn 的函数,可以想象一个 getinfo(0级) 在顶的栈.
+	LogUtils.stackLevel = 2 -- 有二次封装的需要再剔除一层，也就是 3
+	LogUtils.stackIndentList = {} -- 方法的堆栈前缀字符串
+	LogUtils.stackIndentListForLog = {} -- 日志的堆栈前缀字符串
 	LogUtils.fileNameCacheDict = {}
-	LogUtils.lastSackIndentCount = -1
+	LogUtils.currentStackIndentCount = 0
 	LogUtils.filterList = {
 		"LogUtils -> d"
 	}
 	LogUtils.lockLogStackLength = -1
 	LogUtils.lockLogAfter = false --发生过滤后，后续Log是否继续输出
-	LogUtils.logging = false
-	LogUtils.recoverLog = false
+	LogUtils.logging = true
+	LogUtils.recoverLog = false -- 追溯调用
 	LogUtils.logOutputCount = 1
 	LogUtils.stackLogCacheList = {} --Log缓存
 	LogUtils.logCount = 0
@@ -31,6 +36,8 @@ if not LogUtils then
 	        	_staticFunc:Destroy()
 			_staticFunc = nil
 		end
+	elseif false then --Unity xLua
+	    -- TODO
 	end
 	
 	LogUtils.split = function(input, delimiter)--字符串切割
@@ -50,16 +57,20 @@ if not LogUtils then
 	
 	LogUtils.cacheStackIndent = function(stackIndentCount_)
 		while #LogUtils.stackIndentList < stackIndentCount_ do
-			local _indentLength =  #LogUtils.stackIndentList -- 有移除操作的不要用这个写法
+			local _indentLength =  #LogUtils.stackIndentList
 			local _indentStr = ""
+			local _indentLogStr = "    "
 			for _idx = 1 , _indentLength do
 				if _idx == _indentLength then
 					_indentStr = _indentStr .. "   "
+					_indentLogStr = _indentLogStr .. "   "
 				else
-					_indentStr = _indentStr .. "   |"
+					_indentStr = _indentStr .. "   +"
+					_indentLogStr = _indentLogStr .. "    "
 				end
 			end
 			table.insert(LogUtils.stackIndentList, _indentStr)
+			table.insert(LogUtils.stackIndentListForLog, _indentLogStr)
 		end
 	end
 	
@@ -79,7 +90,7 @@ if not LogUtils then
 		local _fileShortName = LogUtils.getFileShortName(fileName_)-- 文件短名
 		local _stackFuncName = funcName_ or "?"-- 缓存当前方法名
 		local _fileAndFuncName = _fileShortName .. " -> " .. _stackFuncName-- 文件名 -> 方法名
-		for _idx = 1,table.getn(LogUtils.filterList) do-- 判断是否过滤
+		for _idx = 1,#LogUtils.filterList do-- 判断是否过滤
 			if _fileAndFuncName == LogUtils.filterList[_idx] then 
 				return nil
 			end
@@ -129,10 +140,8 @@ if not LogUtils then
 		if not LogUtils.logging then
 			return
 		end
-		--0表示getinfo本身
-		--1表示调用getinfo的函数(printCallStack)
-		--2表示调用 LogUtils.funcIn 的函数,可以想象一个 getinfo(0级) 在顶的栈.
-		local _stackLevel = 2
+		-- 按照指定的栈数进行获取
+		local _stackLevel = LogUtils.stackLevel
 		-- 当前调用方法的堆栈
 		local _stackFrame = debug.getinfo( _stackLevel, "nSl")
 		local _fileName = fileName_ or _stackFrame.source
@@ -220,13 +229,28 @@ if not LogUtils then
 		if _stackIndentCount > 0 then
 			_stackIndentStr = LogUtils.stackIndentList[_stackIndentCount]
 		end
+		LogUtils.currentStackIndentCount = _stackIndentCount
 		LogUtils.doLog(string.format("lua ----> %s%s%s",_stackIndentStr,_fileAndFuncName,_parameterStr))
 	end
+
+	LogUtils.doDump = function(comment_,object_)
+		comment_ = comment_ or ""
+		LogUtils.Log(string.format(
+			"%s\n%s",
+			comment_,
+			-- 根据工程内的 json 自行修改
+			rapidjson.encode(object_)
+		))
+	end
+	LogUtils.Log = function(log_)
+		LogUtils.doLog(string.format(
+			"        | %s%s",
+			LogUtils.stackIndentListForLog[LogUtils.currentStackIndentCount] or "",
+			log_
+		))
+	end
 end
-
 return LogUtils
-
-
 function a(aKey)
 	LogUtils.funcIn()
 	b("bValue",12)
